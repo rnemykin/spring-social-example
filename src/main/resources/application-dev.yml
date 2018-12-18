@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:h2:file:./db/social-auth
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
