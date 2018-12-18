@@ -29,6 +29,36 @@
                 <constraints nullable="true" references="user_account(id)" foreignKeyName="users_account_id_fk" />
             </column>
         </createTable>
-
     </changeSet>
+
+    <changeSet author="rnemykin" id="14.12.2018-1">
+        <createTable tableName="userconnection">
+            <column name="userId" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="providerId" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="providerUserId" type="varchar(255)"/>
+            <column name="displayName " type="varchar(255)"/>
+            <column name="rank" type="int"/>
+            <column name="profileUrl" type="varchar(512)"/>
+            <column name="imageUrl" type="varchar(512)"/>
+            <column name="accessToken" type="varchar(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="secret" type="varchar(512)"/>
+            <column name="refreshToken" type="varchar(512)"/>
+            <column name="expireTime" type="bigint"/>
+        </createTable>
+
+        <createIndex tableName="userconnection" indexName="UserConnectionRank">
+            <column name="userId"/>
+            <column name="providerId"/>
+            <column name="rank"/>
+        </createIndex>
+
+        <addPrimaryKey tableName="userconnection" columnNames="userId, providerId" constraintName="userconnection_pk"/>
+    </changeSet>
+
 </databaseChangeLog>
