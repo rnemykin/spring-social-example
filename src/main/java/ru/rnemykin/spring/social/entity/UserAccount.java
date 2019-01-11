@@ -1,7 +1,10 @@
 package ru.rnemykin.spring.social.entity;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.rnemykin.spring.social.entity.enums.OAuthProviderEnum;
 
 import javax.persistence.Column;
@@ -12,6 +15,9 @@ import javax.persistence.Id;
 
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserAccount {
     @Id
     String id;

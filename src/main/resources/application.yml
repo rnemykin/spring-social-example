@@ -10,3 +10,5 @@ spring:
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
     enabled: true
+
+server.servlet.session.cookie.name: SESSION_ID

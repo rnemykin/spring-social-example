@@ -1,18 +1,27 @@
 package ru.rnemykin.spring.social.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.UserIdSource;
 import org.springframework.social.config.annotation.ConnectionFactoryConfigurer;
 import org.springframework.social.config.annotation.EnableSocial;
 import org.springframework.social.config.annotation.SocialConfigurer;
+import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.connect.ConnectionSignUp;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
+import org.springframework.social.connect.web.ProviderSignInController;
+import org.springframework.social.connect.web.ProviderSignInUtils;
+import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
 import org.springframework.social.vkontakte.connect.VKontakteConnectionFactory;
+import org.springframework.web.context.request.NativeWebRequest;
 import ru.rnemykin.spring.social.config.env.FacebookEnvironment;
 import ru.rnemykin.spring.social.config.env.SocialEncryptEnvironment;
 import ru.rnemykin.spring.social.config.env.VkontakteEnvironment;
@@ -29,6 +38,7 @@ public class SocialConfiguration implements SocialConfigurer {
     private final FacebookEnvironment fbEnv;
     private final VkontakteEnvironment vkEnv;
     private final SocialEncryptEnvironment encryptEnv;
+    private final ConnectionSignUp connectionSignUpService;
 
 
     @Override
@@ -44,6 +54,26 @@ public class SocialConfiguration implements SocialConfigurer {
 
     @Override
     public UsersConnectionRepository getUsersConnectionRepository(ConnectionFactoryLocator locator) {
-        return new JdbcUsersConnectionRepository(dataSource, locator, noOpText());
+        JdbcUsersConnectionRepository connectionRepository = new JdbcUsersConnectionRepository(dataSource, locator, noOpText());
+        connectionRepository.setConnectionSignUp(connectionSignUpService);
+        return connectionRepository;
+    }
+
+    @Bean
+    public ProviderSignInUtils providerSignInUtils(ConnectionFactoryLocator locator, UsersConnectionRepository repository) {
+        return new ProviderSignInUtils(locator, repository);
+    }
+
+    @Bean
+    public ProviderSignInController providerSignInController(ConnectionFactoryLocator cfl, UsersConnectionRepository ucr) {
+        return new ProviderSignInController(cfl, ucr, new SimpleSignInAdapter());
+    }
+
+    static class SimpleSignInAdapter implements SignInAdapter {
+        @Override
+        public String signIn(String localUserId, Connection<?> connection, NativeWebRequest nativeWebRequest) {
+            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(localUserId, null, null));
+            return null;
+        }
     }
 }
