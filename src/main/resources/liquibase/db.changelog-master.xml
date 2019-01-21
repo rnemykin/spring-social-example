@@ -39,7 +39,9 @@
             <column name="providerId" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="providerUserId" type="varchar(255)"/>
+            <column name="providerUserId" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="displayName " type="varchar(255)"/>
             <column name="rank" type="int"/>
             <column name="profileUrl" type="varchar(512)"/>
@@ -58,7 +60,7 @@
             <column name="rank"/>
         </createIndex>
 
-        <addPrimaryKey tableName="userconnection" columnNames="userId, providerId" constraintName="userconnection_pk"/>
+        <addPrimaryKey tableName="userconnection" columnNames="userId, providerId, providerUserId" constraintName="userconnection_pk"/>
     </changeSet>
 
 </databaseChangeLog>
