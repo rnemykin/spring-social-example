@@ -17,3 +17,6 @@ spring:
     vk:
       clientId:
       clientSecret:
+    yandex:
+      appId:
+      appSecret:
