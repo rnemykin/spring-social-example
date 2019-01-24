@@ -25,7 +25,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 /**
  * override because of incorrect set userProviderId
- * see original org.springframework.social.vkontakte.connect.VKontakteAdapter#setConnectionValues(org.springframework.social.vkontakte.api.VKontakte, org.springframework.social.connect.ConnectionValues)
+ * see original org.springframework.social.vkontakte.connect.VKontakteAdapter#setConnectionValues
  **/
 public class VKontakteAdapter implements ApiAdapter<VKontakte> {
     @Override

@@ -1,27 +1,24 @@
 package ru.rnemykin.spring.social.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.UserIdSource;
 import org.springframework.social.config.annotation.ConnectionFactoryConfigurer;
 import org.springframework.social.config.annotation.EnableSocial;
 import org.springframework.social.config.annotation.SocialConfigurer;
-import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.ConnectionSignUp;
 import org.springframework.social.connect.UsersConnectionRepository;
 import org.springframework.social.connect.jdbc.JdbcUsersConnectionRepository;
-import org.springframework.social.connect.web.ProviderSignInController;
 import org.springframework.social.connect.web.ProviderSignInUtils;
-import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.security.AuthenticationNameUserIdSource;
 import org.springframework.social.vkontakte.connect.VKontakteConnectionFactory;
-import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.social.yandex.config.env.YandexEnvironment;
+import org.springframework.social.yandex.connect.YandexConnectionFactory;
 import ru.rnemykin.spring.social.config.env.FacebookEnvironment;
 import ru.rnemykin.spring.social.config.env.SocialEncryptEnvironment;
 import ru.rnemykin.spring.social.config.env.VkontakteEnvironment;
@@ -45,6 +42,13 @@ public class SocialConfiguration implements SocialConfigurer {
     public void addConnectionFactories(ConnectionFactoryConfigurer connectionCfg, Environment env) {
         connectionCfg.addConnectionFactory(new FacebookConnectionFactory(fbEnv.getClientId(), fbEnv.getClientSecret()));
         connectionCfg.addConnectionFactory(new VKontakteConnectionFactory(vkEnv.getClientId(), vkEnv.getClientSecret()));
+        connectionCfg.addConnectionFactory(new YandexConnectionFactory(yandexEnvironment()));
+    }
+
+    @Bean
+    @ConfigurationProperties("spring.social.yandex")
+    public YandexEnvironment yandexEnvironment() {
+        return new YandexEnvironment();
     }
 
     @Override
@@ -64,16 +68,4 @@ public class SocialConfiguration implements SocialConfigurer {
         return new ProviderSignInUtils(locator, repository);
     }
 
-    @Bean
-    public ProviderSignInController providerSignInController(ConnectionFactoryLocator cfl, UsersConnectionRepository ucr) {
-        return new ProviderSignInController(cfl, ucr, new SimpleSignInAdapter());
-    }
-
-    static class SimpleSignInAdapter implements SignInAdapter {
-        @Override
-        public String signIn(String localUserId, Connection<?> connection, NativeWebRequest nativeWebRequest) {
-            SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(localUserId, null, null));
-            return null;
-        }
-    }
 }
