@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.rnemykin.spring.social.entity.User;
 import ru.rnemykin.spring.social.repository.UserRepository;
 
-import java.util.Optional;
-
 @RestController
 @RequiredArgsConstructor
 public class IndexController {
@@ -16,8 +14,10 @@ public class IndexController {
 
 
     @GetMapping("/")
-    public Optional<User> index() {
-        return userRepository.findByAccountId(SecurityContextHolder.getContext().getAuthentication().getName());
+    public User index() {
+        String accountId = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new RuntimeException("user not found, accountId=" + accountId));
     }
 
 }
